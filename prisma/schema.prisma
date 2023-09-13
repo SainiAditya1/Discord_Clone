@@ -9,7 +9,7 @@ datasource db {
 }
 
 model Profile {
-  id String &id @default(uuid())
+  id String @id @default(uuid())
   userId String @unique
   name String
   imageUrl String @db.Text
@@ -17,6 +17,7 @@ model Profile {
 
   servers Server[]
   members Member[]
+  channels Channel[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -33,6 +34,7 @@ profileId String
 profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
 members  Member[]
+channels Channel[]
 
 createdAt DateTime @default(now())
 updatedAt DateTime @updatedAt
@@ -57,5 +59,34 @@ model Member {
   serverId String
   server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([profileId])
+  @@index([serverId])
+}
+
+enum ChannelType {
+  TEXT 
+  AUDIO
+  VIDEO
+}
+
+model Channel {
+  id String @id @default(uuid())
+  name String
+  type ChannelType @default(TEXT)
+
+  profileId String
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  serverId String
+  server Server @relation(fields: [serverId], references: [id], onDelete:Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([profileId])
+  @@index([serverId])
+
 }
